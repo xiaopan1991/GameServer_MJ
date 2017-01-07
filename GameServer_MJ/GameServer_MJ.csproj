@@ -30,10 +30,41 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="MySql.Data">
+      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\packages\protobuf-net.2.1.0\lib\net45\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Code\Core\Conn.cs" />
+    <Compile Include="Code\Core\Player.cs" />
+    <Compile Include="Code\Core\Room.cs" />
+    <Compile Include="Code\Core\ServerNet.cs" />
+    <Compile Include="Code\Core\Sys.cs" />
+    <Compile Include="Code\Core\Manager\DataManager.cs" />
+    <Compile Include="Code\Core\Manager\RoomManager.cs" />
+    <Compile Include="Code\Core\Protocol\ProtocolBase.cs" />
+    <Compile Include="Code\Core\Protocol\ProtocolBytes.cs" />
+    <Compile Include="Code\Core\Protocol\ProtocolStr.cs" />
+    <Compile Include="Code\Logic\HandleConnMsg.cs" />
+    <Compile Include="Code\Logic\HandlePlayerEvent.cs" />
+    <Compile Include="Code\Logic\HandlePlayerMsg.cs" />
+    <Compile Include="Code\Logic\HandleRoomMsg.cs" />
+    <Compile Include="Code\Logic\PlayerData.cs" />
+    <Compile Include="Code\Logic\PlayerTempData.cs" />
+    <Compile Include="Code\Core\Protocol\ProtocolProtoBuf.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Code\.DS_Store" />
+    <None Include="Code\Core\.DS_Store" />
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,13 +1,11 @@
 ﻿using System;
-using MySql.Data;
 using MySql.Data.MySqlClient;
-using System.Data;
 using System.Text.RegularExpressions;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
-namespace SocketTest
+namespace GameServer_MJ
 {
 	public class DataManager
 	{
@@ -56,7 +54,7 @@ namespace SocketTest
 
 			string cmdStr = string.Format("select * from user where id='{0}'", id);
 			MySqlCommand cmd = new MySqlCommand(cmdStr, sqlConn);
-			try 
+			try
 			{
 				MySqlDataReader dataReader = cmd.ExecuteReader();
 				bool hasRows = dataReader.HasRows;
@@ -88,7 +86,8 @@ namespace SocketTest
 			string cmdStr = string.Format("insert into user set id ='{0}', pw='{1}';", id, pw);
 			MySqlCommand cmd = new MySqlCommand(cmdStr, sqlConn);
 
-			try {
+			try
+			{
 				cmd.ExecuteNonQuery();
 				return true;
 			}

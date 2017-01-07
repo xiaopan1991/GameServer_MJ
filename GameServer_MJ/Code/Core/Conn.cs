@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-namespace SocketTest
+namespace GameServer_MJ
 {
 	public class Conn
 	{

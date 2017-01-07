@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SocketTest
+namespace GameServer_MJ
 {
 	public class Room
 	{

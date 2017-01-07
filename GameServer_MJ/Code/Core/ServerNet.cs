@@ -11,7 +11,7 @@ using System.Resources;
 using System.Timers;
 using System.Reflection;
 
-namespace SocketTest
+namespace GameServer_MJ
 {
 	public class ServerNet
 	{
@@ -51,6 +51,9 @@ namespace SocketTest
 					break;
 				case ProtocolBaseType.Bytes:
 					proto = new ProtocolBytes();
+					break;
+				case ProtocolBaseType.Protobuf:
+					proto = new ProtocolProtoBuf();
 					break;
 				default:
 					break;

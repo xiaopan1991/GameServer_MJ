@@ -1,5 +1,5 @@
 ﻿using System;
-namespace SocketTest
+namespace GameServer_MJ
 {
 	public class Player
 	{
