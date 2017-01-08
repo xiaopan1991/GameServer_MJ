@@ -29,7 +29,7 @@ namespace GameServer_MJ
 				protocol.AddInt(-1);
 			}
 			DataManager.GetInstance().CreatePlayer(id);
-			conn.Send(protoBase);
+			conn.Send(protocol);
 		}
 
 		public void MsgLogin(Conn conn, ProtocolBase protoBase)

@@ -14,7 +14,7 @@ namespace GameServer_MJ
 		{
 			DataManager.GetInstance().Init();
 			RoomManager.GetInstance().Init();
-			ServerNet.GetInstance().InitAndStart("127.0.0.1", 1234, ProtocolBaseType.Bytes);
+			ServerNet.GetInstance().InitAndStart("192.168.1.131", 1234, ProtocolBaseType.Bytes);
 			Console.ReadLine();
 		}
 	}

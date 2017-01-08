@@ -62,9 +62,9 @@ namespace GameServer_MJ
 
 		public void Start(string host, int port)
 		{
-			timer.Elapsed += new ElapsedEventHandler(HandleMainTimer);
-			timer.AutoReset = false;
-			timer.Enabled = true;
+			//timer.Elapsed += new ElapsedEventHandler(HandleMainTimer);
+			//timer.AutoReset = false;
+			//timer.Enabled = true;
 
 			conns = new Conn[maxConn];
 			for (int i = 0; i < maxConn; i++)
