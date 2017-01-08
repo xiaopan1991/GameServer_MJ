@@ -66,7 +66,7 @@ namespace GameServer_MJ
 				//player.Logout();
 			}
 			Console.WriteLine("[断开连接]" + GetAdress());
-			socket.Shutdown(SocketShutdown.Both);
+			//socket.Shutdown(SocketShutdown.Both);
 			socket.Close();
 
 			ResetValue();
