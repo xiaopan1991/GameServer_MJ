@@ -1,4 +1,8 @@
 ﻿using System;
+using System.IO;
+using ProtoBuf;
+using System.Linq;
+
 namespace GameServer_MJ
 {
 	public class ProtocolProtoBuf : ProtocolBase
@@ -16,6 +20,30 @@ namespace GameServer_MJ
 		public override byte[] Encode()
 		{
 			return bytes;
+		}
+
+		public override byte[] Encode<T>(T data)
+		{
+			try
+			{
+				MemoryStream ms = new MemoryStream();
+				Serializer.Serialize<T>(ms, data);
+				byte[] lenBytes = BitConverter.GetBytes(ms.Length);
+
+				byte[] result = new byte[ms.Length];
+				ms.Position = 0;
+				ms.Read(result, 0, result.Length);
+				ms.Close();
+
+				bytes = lenBytes.Concat(result).ToArray();
+
+				return bytes;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("序列化失败: " + ex.ToString());
+				return null;
+			}
 		}
 
 		public override string GetName()

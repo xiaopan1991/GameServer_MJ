@@ -23,6 +23,10 @@ namespace GameServer_MJ
 		{
 			return new byte[] { };
 		}
+		public virtual byte[] Encode<T>(T data)
+		{
+			return new byte[] { };
+		}
 		//协议名称，用于消息分发
 		public virtual string GetName()
 		{
