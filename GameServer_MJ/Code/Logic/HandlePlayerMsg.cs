@@ -22,7 +22,7 @@ namespace GameServer_MJ
 
 		public void MsgAddScore(Player player, ProtocolBase protoBase)
 		{
-			ProtocolJson protocol = protoBase as ProtocolJson;
+			//ProtocolJson protocol = protoBase as ProtocolJson;
 
 			player.data.score += 1;
 			Console.WriteLine(string.Format("MsgAddScore 用户名: {0} 分数: {1}", player.id, player.data.score));

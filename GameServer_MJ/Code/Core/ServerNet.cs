@@ -20,7 +20,7 @@ namespace GameServer_MJ
 
 		private static ServerNet instance = null;
 		private Timer timer;
-		private long heartBeatTime = 100;
+		//private long heartBeatTime = 100;
 		private ProtocolBase proto;
 
 
@@ -108,7 +108,7 @@ namespace GameServer_MJ
 		private void HeartBeat()
 		{
 			//Console.WriteLine("[主定时器执行]");
-			long timeNow = Sys.GetTimeStamp();
+			//long timeNow = Sys.GetTimeStamp();
 
 			for (int i = 0; i < conns.Length; i++)
 			{
