@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameServer_MJ", "GameServer_MJ\GameServer_MJ.csproj", "{C3703F38-583D-4059-B152-2E600223773A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonDLL", "CommonDLL\CommonDLL.csproj", "{E1045918-126B-4423-88FB-D8068212F1C7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,5 +15,9 @@ Global
 		{C3703F38-583D-4059-B152-2E600223773A}.Debug|x86.Build.0 = Debug|x86
 		{C3703F38-583D-4059-B152-2E600223773A}.Release|x86.ActiveCfg = Release|x86
 		{C3703F38-583D-4059-B152-2E600223773A}.Release|x86.Build.0 = Release|x86
+		{E1045918-126B-4423-88FB-D8068212F1C7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E1045918-126B-4423-88FB-D8068212F1C7}.Debug|x86.Build.0 = Debug|Any CPU
+		{E1045918-126B-4423-88FB-D8068212F1C7}.Release|x86.ActiveCfg = Release|Any CPU
+		{E1045918-126B-4423-88FB-D8068212F1C7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

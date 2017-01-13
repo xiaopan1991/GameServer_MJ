@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using LitJson;
 
-namespace GameServer_MJ
+namespace CommonDLL
 {
 	public enum ProtocolBaseType
 	{

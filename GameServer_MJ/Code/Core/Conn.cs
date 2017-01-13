@@ -1,21 +1,12 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Net;
-using System.Collections.Generic;
-using System.Collections;
-using MySql.Data;
-using MySql.Data.MySqlClient;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
+using CommonDLL;
 
 namespace GameServer_MJ
 {
 	public class Conn
 	{
 		public const int BUFFER_SIZE = 1024;
-		public Socket socket;
-		public bool isUse = false;
 
 		public byte[] readBuff = new byte[BUFFER_SIZE];
 		public int buffCount = 0;
@@ -23,7 +14,10 @@ namespace GameServer_MJ
 		public byte[] lenBytes = new byte[sizeof(UInt32)];
 		public Int32 msgLength = 0;
 		public long lastTickTime = long.MinValue;
+
+		public Socket socket;
 		public Player player;
+		public bool isUse = false;
 
 		public Conn()
 		{
@@ -61,7 +55,7 @@ namespace GameServer_MJ
 		{
 			if (!isUse)
 				return;
-			if (player !=null )
+			if (player != null)
 			{
 				//player.Logout();
 			}

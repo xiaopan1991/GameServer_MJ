@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Collections;
-using System.Collections.Generic;
-using MySql.Data;
-using MySql.Data.MySqlClient;
-using System.Data;
 using System.Linq;
-using System.Resources;
 using System.Timers;
 using System.Reflection;
+using CommonDLL;
 
 namespace GameServer_MJ
 {
@@ -49,11 +44,8 @@ namespace GameServer_MJ
 				case ProtocolBaseType.String:
 					proto = new ProtocolStr();
 					break;
-				case ProtocolBaseType.Bytes:
-					proto = new ProtocolBytes();
-					break;
-				case ProtocolBaseType.Protobuf:
-					proto = new ProtocolProtoBuf();
+				case ProtocolBaseType.Json:
+					proto = new ProtocolJson();
 					break;
 				default:
 					break;
@@ -103,7 +95,7 @@ namespace GameServer_MJ
 					return i;
 				}
 			}
-			return -1;	
+			return -1;
 		}
 
 		private void HandleMainTimer(object sender, ElapsedEventArgs args)
@@ -124,12 +116,12 @@ namespace GameServer_MJ
 				if (conn == null) continue;
 				if (!conn.isUse) continue;
 
-				if (conn.lastTickTime < timeNow - heartBeatTime)
-				{
-					Console.WriteLine("[心跳引起断开网络连接]" + conn.GetAdress());
-					lock(conn)
-						conn.Close();
-				}
+				//if (conn.lastTickTime < timeNow - heartBeatTime)
+				//{
+				//	Console.WriteLine("[心跳引起断开网络连接]" + conn.GetAdress());
+				//	lock (conn)
+				//		conn.Close();
+				//}
 			}
 		}
 
@@ -188,12 +180,12 @@ namespace GameServer_MJ
 
 		public void Close()
 		{
-			for (int i = 0; i < conns.Length;i++)
+			for (int i = 0; i < conns.Length; i++)
 			{
 				Conn conn = conns[i];
 				if (conn == null) continue;
 				if (!conn.isUse) continue;
-				lock(conn)
+				lock (conn)
 				{
 					conn.Close();
 				}
@@ -236,7 +228,7 @@ namespace GameServer_MJ
 					Console.WriteLine(str + methodName);
 					return;
 				}
-				object[] obj = new object[] { conn, protoBase};
+				object[] obj = new object[] { conn, protoBase };
 				Console.WriteLine("[处理连接消息] " + conn.GetAdress() + ":" + name);
 				mm.Invoke(handleConnMsg, obj);
 			}

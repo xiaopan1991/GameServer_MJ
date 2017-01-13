@@ -1,9 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CommonDLL;
+using LitJson;
 
 namespace GameServer_MJ
 {
+	public class RoomOptions
+	{
+		public string RoomName = string.Empty;
+
+		public RoomOptions()
+		{
+			this.RoomName = string.Empty;
+		}
+		public RoomOptions(string name)
+		{
+			this.RoomName = name;
+		}
+	}
 	public class Room
 	{
 		public enum Status
@@ -13,8 +28,9 @@ namespace GameServer_MJ
 		}
 
 		public Status status = Status.Prepare;
-		public int maxPlayers = 6;
+		public int maxPlayers = 4;
 		public Dictionary<string, Player> list = new Dictionary<string, Player>();
+		public RoomOptions Options = new RoomOptions();
 
 		public bool AddPlayer(Player player)
 		{
@@ -86,20 +102,23 @@ namespace GameServer_MJ
 			}
 		}
 
-		public ProtocolBytes GetRoomInfo()
+		public ProtocolJson GetRoomInfo()
 		{
-			ProtocolBytes protocol = new ProtocolBytes();
-			protocol.AddString("GetRoomInfo");
-			protocol.AddInt(list.Count);
+			JsonData ServerData = new JsonData();
+			ServerData["ServerProtoCol"] = "GetRoomInfo";
+			ServerData["RoomInfo"] = new JsonData();
+
 			foreach (Player player in list.Values)
 			{
-				protocol.AddString(player.id);
-				protocol.AddInt(player.tempData.team);
-				protocol.AddInt(player.data.win);
-				protocol.AddInt(player.data.fail);
-				int isOwner = player.tempData.isOwner ? 1 : 0;
-				protocol.AddInt(isOwner);
+				JsonData data = new JsonData();
+				data["UserName"] = player.id;
+				data["Team"] = player.tempData.team;
+				data["Win"] = player.data.win;
+				data["Fail"] = player.data.fail;
+				data["IsOwner"] = player.tempData.isOwner ? 1 : 0;
+				ServerData["RoomInfo"].Add(data);
 			}
+			ProtocolJson protocol = new ProtocolJson(ServerData.ToJson());
 			return protocol;
 		}
 	}

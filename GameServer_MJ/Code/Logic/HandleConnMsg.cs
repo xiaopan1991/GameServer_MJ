@@ -1,4 +1,8 @@
 ﻿using System;
+using CommonDLL;
+using System.Text;
+using LitJson;
+
 namespace GameServer_MJ
 {
 	public partial class HandleConnMsg
@@ -11,79 +15,83 @@ namespace GameServer_MJ
 
 		public void MsgRegister(Conn conn, ProtocolBase protoBase)
 		{
-			int start = 0;
-			ProtocolBytes protocol = protoBase as ProtocolBytes;
-			string protoName = protocol.GetString(start, ref start);
-			string id = protocol.GetString(start, ref start);
-			string pw = protocol.GetString(start, ref start);
+			ProtocolJson protocol = protoBase as ProtocolJson;
+			RegisterData registerData = protocol.GetData<RegisterData>();
 			string strFormat = "[收到注册协议]" + conn.GetAdress();
-			Console.WriteLine(strFormat + " 用户名: " + id + "  密码: " + pw);
-			protocol = new ProtocolBytes();
-			protocol.AddString(protoName);
-			if (DataManager.GetInstance().Register(id, pw))
+			Console.WriteLine(strFormat + " 用户名: " + registerData.UserName + "  密码: " + registerData.PassWord);
+
+			JsonData Jdata = new JsonData();
+			Jdata["ServerProtoCol"] = registerData.ServerProtoCol;
+
+			if (DataManager.GetInstance().Register(registerData.UserName, registerData.PassWord))
 			{
-				protocol.AddInt(0);
+				Jdata["State"] = 0;
+				DataManager.GetInstance().CreatePlayer(registerData.UserName);
 			}
 			else
 			{
-				protocol.AddInt(-1);
+				Jdata["State"] = -1;
 			}
-			DataManager.GetInstance().CreatePlayer(id);
+			protocol = new ProtocolJson(Jdata.ToJson());
 			conn.Send(protocol);
 		}
 
 		public void MsgLogin(Conn conn, ProtocolBase protoBase)
 		{
-			int start = 0;
-			ProtocolBytes protocol = protoBase as ProtocolBytes;
-			string protoName = protocol.GetString(start, ref start);
-			string id = protocol.GetString(start, ref start);
-			string pw = protocol.GetString(start, ref start);
-
+			ProtocolJson protocol = protoBase as ProtocolJson;
+			LoginData loginData = protocol.GetData<LoginData>();
 			string strFormat = "[收到登录协议]" + conn.GetAdress();
-			Console.WriteLine(strFormat + "  用户名: " + id + "  密码: " + pw);
+			Console.WriteLine(strFormat + "  用户名: " + loginData.UserName + "  密码: " + loginData.PassWord);
 
-			ProtocolBytes protocolRet = new ProtocolBytes();
-			protocolRet.AddString(protoName);
+			JsonData Jdata = new JsonData();
+			Jdata["ServerProtoCol"] = loginData.ServerProtoCol;
 
-			if (!DataManager.GetInstance().CheckPassWord(id, pw))
+			if (!DataManager.GetInstance().CheckPassWord(loginData.UserName, loginData.PassWord))
 			{
-				protocolRet.AddInt(-1);
-				conn.Send(protocolRet);
+				Jdata["State"] = -1;
+				protocol = new ProtocolJson(Jdata.ToJson());
+				conn.Send(protocol);
 				return;
 			}
 
-			ProtocolBytes protocolLogout = new ProtocolBytes();
-			protocolLogout.AddString("Logout");
-			if (!Player.KickOff(id, protocolLogout))
+			JsonData logoutJsonData = new JsonData();
+			logoutJsonData["ServerProtoCol"] = "Logout";
+
+			ProtocolJson protocolLogout = new ProtocolJson(logoutJsonData.ToJson());
+			if (!Player.KickOff(loginData.UserName, protocolLogout))
 			{
-				protocolRet.AddInt(-1);
-				conn.Send(protocolRet);
+				Jdata["State"] = -1;
+				protocol = new ProtocolJson(Jdata.ToJson());
+				conn.Send(protocol);
 				return;
 			}
 
-			PlayerData playerData = DataManager.GetInstance().GetPlayerData(id);
+			PlayerData playerData = DataManager.GetInstance().GetPlayerData(loginData.UserName);
 			if (playerData == null)
 			{
-				protocolRet.AddInt(-1);
-				conn.Send(protocolRet);
+				Jdata["State"] = -1;
+				protocol = new ProtocolJson(Jdata.ToJson());
+				conn.Send(protocol);
 				return;
 			}
 
-			conn.player = new Player(id, conn);
+			conn.player = new Player(loginData.UserName, conn);
 			conn.player.data = playerData;
 
 			ServerNet.GetInstance().handlePlayerEvent.OnLogin(conn.player);
 
-			protocolRet.AddInt(0);
-			conn.Send(protocolRet);
+			Jdata["State"] = 0;
+			protocol = new ProtocolJson(Jdata.ToJson());
+			conn.Send(protocol);
 		}
 
 		public void MsgLogout(Conn conn, ProtocolBase protoBase)
 		{
-			ProtocolBytes protocol = new ProtocolBytes();
-			protocol.AddString("Logout");
-			protocol.AddInt(0);
+			JsonData Jdata = new JsonData();
+			Jdata["ServerProtoCol"] = "Logout";
+			Jdata["State"] = 0;
+
+			ProtocolJson protocol = new ProtocolJson(Jdata.ToJson());
 			conn.Send(protocol);
 			if (conn.player == null)
 			{

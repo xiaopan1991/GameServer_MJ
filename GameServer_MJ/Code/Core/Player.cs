@@ -1,4 +1,5 @@
 ﻿using System;
+using CommonDLL;
 namespace GameServer_MJ
 {
 	public class Player

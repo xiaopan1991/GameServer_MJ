@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using LitJson;
+using CommonDLL;
 
 namespace GameServer_MJ
 {
@@ -26,9 +28,11 @@ namespace GameServer_MJ
 			list = new List<Room>();
 		}
 
-		public void CreateRoom(Player player)
+		public void CreateRoom(Player player, RoomOptions options=null)
 		{
 			Room room = new Room();
+			if (options != null)
+				room.Options = options;
 			lock(list)
 			{
 				list.Add(room);
@@ -50,19 +54,23 @@ namespace GameServer_MJ
 			}
 		}
 
-		public ProtocolBytes GetRoomList()
+		public ProtocolJson GetRoomList()
 		{
-			ProtocolBytes protocol = new ProtocolBytes();
-			protocol.AddString("GetRoomList");
+			JsonData rData = new JsonData();
+			rData["ServerProtoCol"] = "GetRoomList";
+			rData["RoomList"] = new JsonData();
 			int count = list.Count;
-
-			protocol.AddInt(count);
 			for (int i = 0; i < count; i++)
 			{
 				Room room = list[i];
-				protocol.AddInt(room.list.Count);
-				protocol.AddInt((int)room.status);
+				JsonData jdata = new JsonData();
+				jdata["RoomName"] = room.Options.RoomName;
+				jdata["Count"] = room.list.Count;
+				jdata["Status"] = (int)room.status;
+				rData["RoomList"].Add(jdata);
 			}
+
+			ProtocolJson protocol = new ProtocolJson(rData.ToJson());
 			return protocol;
 		}
 	}

@@ -34,9 +34,6 @@
     <Reference Include="MySql.Data">
       <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net">
-      <HintPath>..\packages\protobuf-net.2.1.0\lib\net45\protobuf-net.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="LitJson">
       <HintPath>..\packages\LitJson.0.7.0\lib\LitJson.dll</HintPath>
@@ -52,22 +49,28 @@
     <Compile Include="Code\Core\Sys.cs" />
     <Compile Include="Code\Core\Manager\DataManager.cs" />
     <Compile Include="Code\Core\Manager\RoomManager.cs" />
-    <Compile Include="Code\Core\Protocol\ProtocolBase.cs" />
-    <Compile Include="Code\Core\Protocol\ProtocolBytes.cs" />
-    <Compile Include="Code\Core\Protocol\ProtocolStr.cs" />
     <Compile Include="Code\Logic\HandleConnMsg.cs" />
     <Compile Include="Code\Logic\HandlePlayerEvent.cs" />
     <Compile Include="Code\Logic\HandlePlayerMsg.cs" />
     <Compile Include="Code\Logic\HandleRoomMsg.cs" />
     <Compile Include="Code\Logic\PlayerData.cs" />
     <Compile Include="Code\Logic\PlayerTempData.cs" />
-    <Compile Include="Code\Core\Protocol\ProtocolProtoBuf.cs" />
+    <Compile Include="Code\Core\Common\StaticValue.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Code\.DS_Store" />
     <None Include="Code\Core\.DS_Store" />
     <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Code\Core\Common\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonDLL\CommonDLL.csproj">
+      <Project>{E1045918-126B-4423-88FB-D8068212F1C7}</Project>
+      <Name>CommonDLL</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

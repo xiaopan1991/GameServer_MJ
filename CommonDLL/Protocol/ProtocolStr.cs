@@ -1,5 +1,6 @@
 ﻿using System;
-namespace GameServer_MJ
+using LitJson;
+namespace CommonDLL
 {
 	public class ProtocolStr : ProtocolBase
 	{
