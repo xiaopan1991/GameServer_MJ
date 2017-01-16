@@ -54,11 +54,10 @@ namespace GameServer_MJ
 			}
 		}
 
-		public ProtocolJson GetRoomList()
+		public JsonData GetRoomList()
 		{
-			JsonData rData = new JsonData();
-			rData["ServerProtoCol"] = "GetRoomList";
-			rData["RoomList"] = new JsonData();
+			JsonData SendData = new JsonData();
+			SendData["RoomList"] = new JsonData();
 			int count = list.Count;
 			for (int i = 0; i < count; i++)
 			{
@@ -67,11 +66,9 @@ namespace GameServer_MJ
 				jdata["RoomName"] = room.Options.RoomName;
 				jdata["Count"] = room.list.Count;
 				jdata["Status"] = (int)room.status;
-				rData["RoomList"].Add(jdata);
+				SendData["RoomList"].Add(jdata);
 			}
-
-			ProtocolJson protocol = new ProtocolJson(rData.ToJson());
-			return protocol;
+			return SendData;
 		}
 	}
 }

@@ -15,7 +15,7 @@ namespace GameServer_MJ
 				Room room = player.tempData.room;
 				RoomManager.GetInstance().LeaveRoom(player);
 				if (room != null)
-					room.Broadcast(room.GetRoomInfo());
+					room.Broadcast(StaticValue.Server_GetRoomInfo, room.GetRoomInfo());
 			}
 		}
 	}

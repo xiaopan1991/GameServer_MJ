@@ -8,96 +8,72 @@ namespace GameServer_MJ
 	{
 		public void MsgGetRoomList(Player player, ProtocolBase protoBase)
 		{
-			player.Send(RoomManager.GetInstance().GetRoomList());
+			player.Send(StaticValue.Server_GetRoomList, RoomManager.GetInstance().GetRoomList());
 		}
 
 		public void MsgCreateRoom(Player player, ProtocolBase protoBase)
 		{
 			ProtocolJson protocol = protoBase as ProtocolJson;
-			CreateRoomData createRoomData = protocol.GetData<CreateRoomData>();
+			string ServerName = protocol.GetName();
+			string RoomName = (string)protocol.GetValue("RoomName");
 
-			ProtocolJson protocolRet;
-			JsonData rData = new JsonData();
-			rData["ServerProtoCol"] = createRoomData.ServerProtoCol;
-
+			JsonData SendData = new JsonData();
 			if (player.tempData.status != PlayerTempData.Status.None)
 			{
-				rData["State"] = -1;
-				protocolRet = new ProtocolJson(rData.ToJson());
-				player.Send(protocolRet);
-
+				SendData["State"] = -1;
+				player.Send(ServerName, SendData);
 				Console.WriteLine(string.Format("MsgCreateRoom Fail; id:{0}", player.id));
 				return;
 			}
 
-			RoomOptions options = new RoomOptions(createRoomData.RoomName);
+			RoomOptions options = new RoomOptions(RoomName);
 			RoomManager.GetInstance().CreateRoom(player, options);
 
-			rData["State"] = 0;
-			rData["RoomList"] = new JsonData();
-			var list = RoomManager.GetInstance().list;
-			int count = list.Count;
-			for (int i = 0; i < count; i++)
-			{
-				Room room = list[i];
-				JsonData jdata = new JsonData();
-				jdata["RoomName"] = room.Options.RoomName;
-				jdata["Count"] = room.list.Count;
-				jdata["Status"] = (int)room.status;
-				rData["RoomList"].Add(jdata);
-			}
-			protocolRet = new ProtocolJson(rData.ToJson());
-			player.Send(protocolRet);
+			SendData = RoomManager.GetInstance().GetRoomList();
+			SendData["State"] = 0;
+			player.Send(ServerName, SendData);
 			Console.WriteLine(string.Format("MagCreateRoom Seccuss; id:{0}", player.id));
 		}
 
 		public void MsgEnterRoom(Player player, ProtocolBase protoBase)
 		{
 			ProtocolJson protocol = protoBase as ProtocolJson;
-			string protoName = protocol.GetName();
+			string ServerName = protocol.GetName();
+			int Index = (int)protocol.GetValue("Index");
+			Console.WriteLine(string.Format("[收到MsgEnterRoom] UserName:{0}; Index:{1}" , player.id, Index));
 
-			JsonData ClientData = protocol.GetJsonData();
-			int index = (int)ClientData["Index"];
-			Console.WriteLine("[收到MsgEnterRoom] " + player.id + " " + index);
+			JsonData SendData = new JsonData();
 
-			JsonData ServerData = new JsonData();
-			ServerData["ServerProtoCol"] = protoName;
-
-			if (index < 0 || index >= RoomManager.GetInstance().list.Count)
+			if (Index < 0 || Index >= RoomManager.GetInstance().list.Count)
 			{
 				Console.WriteLine(string.Format("MsgEnterRoom index err; id:{0}", player.id));
-				ServerData["State"] = -1;
+				SendData["State"] = -1;
 
-				protocol = new ProtocolJson(ServerData.ToJson());
-				player.Send(protocol);
+				player.Send(ServerName, SendData);
 				return;
 			}
 
-			Room room = RoomManager.GetInstance().list[index];
+			Room room = RoomManager.GetInstance().list[Index];
 			if (room.status != Room.Status.Prepare)
 			{
 				Console.WriteLine(string.Format("MsgEnterRoom status err; id:{0}", player.id));
-				ServerData["State"] = -1;
-
-				protocol = new ProtocolJson(ServerData.ToJson());
-				player.Send(protocol);
+				SendData["State"] = -1;
+				player.Send(ServerName, SendData);
 				return;
 			}
 
 			if (room.AddPlayer(player))
 			{
-				room.Broadcast(RoomManager.GetInstance().GetRoomList());
+				room.Broadcast(StaticValue.Server_GetRoomList, RoomManager.GetInstance().GetRoomList());
 
-				ServerData["State"] = 0;
-				protocol = new ProtocolJson(ServerData.ToJson());
-				player.Send(protocol);
+				SendData["State"] = 0;
+				player.Send(ServerName, SendData);
 			}
 			else
 			{
 				Console.WriteLine("MsgEnterRoom maxPlayer err; id:{0}", player.id);
-				ServerData["State"] = -1;
-				protocol = new ProtocolJson(ServerData.ToJson());
-				player.Send(protocol);
+				SendData["State"] = -1;
+				player.Send(ServerName, SendData);
 			}
 		}
 
@@ -109,36 +85,30 @@ namespace GameServer_MJ
 				return;
 			}
 			Room room = player.tempData.room;
-			player.Send(room.GetRoomInfo());
+			player.Send(StaticValue.Server_GetRoomInfo, room.GetRoomInfo());
 		}
 
 		public void MsgLeaveRoom(Player player, ProtocolBase protoBase)
 		{
 			ProtocolJson protocol = protoBase as ProtocolJson;
-			string protocolName = protocol.GetName();
+			string ServerName = protocol.GetName();
 
-			JsonData Jdata = new JsonData();
-			Jdata["ServerProtoCol"] = protocolName;
-
-			ProtocolJson protocolRet;
-
+			JsonData SendData = new JsonData();
 			if (player.tempData.status != PlayerTempData.Status.Room)
 			{
 				Console.WriteLine(string.Format("MsgLeaveRoom status err; id:{0}", player.id));
-				Jdata["State"] = -1;
-				protocolRet = new ProtocolJson(Jdata.ToJson());
-				player.Send(protocolRet);
+				SendData["State"] = -1;
+				player.Send(ServerName, SendData);
 				return;
 			}
 
-			Jdata["State"] = 0;
-			protocolRet = new ProtocolJson(Jdata.ToJson());
-			player.Send(protocolRet);
+			SendData["State"] = 0;
+			player.Send(ServerName, SendData);
 			Room room = player.tempData.room;
 			RoomManager.GetInstance().LeaveRoom(player);
 
 			if (room != null)
-				room.Broadcast(room.GetRoomInfo());
+				room.Broadcast(StaticValue.Server_GetRoomInfo, room.GetRoomInfo());
 		}
 	}
 }

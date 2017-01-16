@@ -16,83 +16,74 @@ namespace GameServer_MJ
 		public void MsgRegister(Conn conn, ProtocolBase protoBase)
 		{
 			ProtocolJson protocol = protoBase as ProtocolJson;
-			RegisterData registerData = protocol.GetData<RegisterData>();
-			string strFormat = "[收到注册协议]" + conn.GetAdress();
-			Console.WriteLine(strFormat + " 用户名: " + registerData.UserName + "  密码: " + registerData.PassWord);
+			string UserName = (string)protocol.GetValue("UserName");
+			string Password = (string)protocol.GetValue("Password");
+			Console.WriteLine(string.Format("[收到注册协议]:{0};  用户名:{1};  密码:   {2}", conn.GetAdress(), UserName, Password));
 
-			JsonData Jdata = new JsonData();
-			Jdata["ServerProtoCol"] = registerData.ServerProtoCol;
-
-			if (DataManager.GetInstance().Register(registerData.UserName, registerData.PassWord))
+			JsonData SendData = new JsonData();
+			if (DataManager.GetInstance().Register(UserName, Password))
 			{
-				Jdata["State"] = 0;
-				DataManager.GetInstance().CreatePlayer(registerData.UserName);
+				SendData["State"] = 0;
+				DataManager.GetInstance().CreatePlayer(UserName);
 			}
 			else
 			{
-				Jdata["State"] = -1;
+				SendData["State"] = -1;
 			}
-			protocol = new ProtocolJson(Jdata.ToJson());
-			conn.Send(protocol);
+			conn.Send(protocol.GetName(), SendData);
 		}
 
 		public void MsgLogin(Conn conn, ProtocolBase protoBase)
 		{
 			ProtocolJson protocol = protoBase as ProtocolJson;
-			LoginData loginData = protocol.GetData<LoginData>();
-			string strFormat = "[收到登录协议]" + conn.GetAdress();
-			Console.WriteLine(strFormat + "  用户名: " + loginData.UserName + "  密码: " + loginData.PassWord);
+			string UserName = (string)protocol.GetValue("UserName");
+			string Password = (string)protocol.GetValue("Password");
+			string ServerName = protocol.GetName();
+			Console.WriteLine(string.Format("[收到登录协议]:{0};  用户名:{1};  密码:   {2}", conn.GetAdress(), UserName, Password));
 
-			JsonData Jdata = new JsonData();
-			Jdata["ServerProtoCol"] = loginData.ServerProtoCol;
+			JsonData SendData = new JsonData();
 
-			if (!DataManager.GetInstance().CheckPassWord(loginData.UserName, loginData.PassWord))
+			if (!DataManager.GetInstance().CheckPassWord(UserName, Password))
 			{
-				Jdata["State"] = -1;
-				protocol = new ProtocolJson(Jdata.ToJson());
-				conn.Send(protocol);
+				SendData["State"] = -1;
+				conn.Send(ServerName, SendData);
 				return;
 			}
 
-			JsonData logoutJsonData = new JsonData();
-			logoutJsonData["ServerProtoCol"] = "Logout";
 
-			ProtocolJson protocolLogout = new ProtocolJson(logoutJsonData.ToJson());
-			if (!Player.KickOff(loginData.UserName, protocolLogout))
+			if (!Player.KickOff(UserName))
 			{
-				Jdata["State"] = -1;
-				protocol = new ProtocolJson(Jdata.ToJson());
-				conn.Send(protocol);
+				SendData["State"] = -1;
+				conn.Send(ServerName, SendData);
 				return;
 			}
 
-			PlayerData playerData = DataManager.GetInstance().GetPlayerData(loginData.UserName);
+			PlayerData playerData = DataManager.GetInstance().GetPlayerData(UserName);
 			if (playerData == null)
 			{
-				Jdata["State"] = -1;
-				protocol = new ProtocolJson(Jdata.ToJson());
-				conn.Send(protocol);
+				SendData["State"] = -1;
+				conn.Send(ServerName, SendData);
 				return;
 			}
 
-			conn.player = new Player(loginData.UserName, conn);
+			conn.player = new Player(UserName, conn);
 			conn.player.data = playerData;
 
 			ServerNet.GetInstance().handlePlayerEvent.OnLogin(conn.player);
 
-			Jdata["State"] = 0;
-			protocol = new ProtocolJson(Jdata.ToJson());
-			conn.Send(protocol);
+			SendData["State"] = 0;
+			conn.Send(ServerName, SendData);
 		}
 
 		public void MsgLogout(Conn conn, ProtocolBase protoBase)
 		{
-			JsonData Jdata = new JsonData();
-			Jdata["ServerProtoCol"] = "Logout";
-			Jdata["State"] = 0;
+			ProtocolJson protocol = protoBase as ProtocolJson;
+			string ServerName = protocol.GetName();
 
-			ProtocolJson protocol = new ProtocolJson(Jdata.ToJson());
-			conn.Send(protocol);
+			JsonData SendData = new JsonData();
+			SendData["State"] = 0;
+
+			conn.Send(ServerName, SendData);
 			if (conn.player == null)
 			{
 				conn.Close();

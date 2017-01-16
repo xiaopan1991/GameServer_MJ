@@ -34,22 +34,17 @@ namespace CommonDLL
 			return System.Text.Encoding.UTF8.GetBytes(Json); ;
 		}
 
-		public T GetData<T>()
+		public JsonData GetValue(string key)
 		{
-			return CommonFunction.Json2Class<T>(Json);
+			return JsonData[key];
 		}
-
 		public override string GetName()
 		{
-			return (string)JsonData["ServerProtoCol"];
+			return (string)GetValue("ServerProtoCol");
 		}
 		public int GetState()
 		{
-			return (int)JsonData["State"];
-		}
-		public JsonData GetJsonData()
-		{
-			return JsonData;
+			return (int)GetValue("State");
 		}
 
 		public override string GetDesc()

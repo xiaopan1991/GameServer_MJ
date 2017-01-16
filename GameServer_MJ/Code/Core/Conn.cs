@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using CommonDLL;
+using LitJson;
 
 namespace GameServer_MJ
 {
@@ -67,8 +68,13 @@ namespace GameServer_MJ
 			ResetValue();
 		}
 
-		public void Send(ProtocolBase protocol)
+		public void Send(string ServerName, JsonData data = null)
 		{
+			if (data == null)
+				data = new JsonData();
+			data["ServerProtoCol"] = ServerName;
+
+			ProtocolJson protocol = new ProtocolJson(data.ToJson());
 			ServerNet.GetInstance().Send(this, protocol);
 		}
 	}

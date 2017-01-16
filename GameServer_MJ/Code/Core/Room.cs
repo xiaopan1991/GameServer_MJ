@@ -94,18 +94,17 @@ namespace GameServer_MJ
 			}
 		}
 
-		public void Broadcast(ProtocolBase protocol)
+		public void Broadcast(string ServerName, JsonData data)
 		{
 			foreach (Player player in list.Values)
 			{
-				player.Send(protocol);
+				player.Send(ServerName, data);
 			}
 		}
 
-		public ProtocolJson GetRoomInfo()
+		public JsonData GetRoomInfo()
 		{
 			JsonData ServerData = new JsonData();
-			ServerData["ServerProtoCol"] = "GetRoomInfo";
 			ServerData["RoomInfo"] = new JsonData();
 
 			foreach (Player player in list.Values)
@@ -118,8 +117,7 @@ namespace GameServer_MJ
 				data["IsOwner"] = player.tempData.isOwner ? 1 : 0;
 				ServerData["RoomInfo"].Add(data);
 			}
-			ProtocolJson protocol = new ProtocolJson(ServerData.ToJson());
-			return protocol;
+			return ServerData;
 		}
 	}
 }

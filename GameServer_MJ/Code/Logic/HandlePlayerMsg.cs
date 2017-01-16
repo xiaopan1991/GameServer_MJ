@@ -9,14 +9,11 @@ namespace GameServer_MJ
 		public void MsgGetScore(Player player, ProtocolBase protoBase)
 		{
 			ProtocolJson protocol = protoBase as ProtocolJson;
-			string protocolName = protocol.GetName();
+			string ServerName = protocol.GetName();
 
-			JsonData Jdata = new JsonData();
-			Jdata["ServerProtoCol"] = protocolName;
-			Jdata["Score"] = player.data.score;
-
-			ProtocolJson protocolRet = new ProtocolJson(Jdata.ToJson());
-			player.Send(protocolRet);
+			JsonData SendData = new JsonData();
+			SendData["Score"] = player.data.score;
+			player.Send(ServerName, SendData);
 			Console.WriteLine(string.Format("MsgGetScore 用户名: {0} 分数: {1}", player.id, player.data.score));
 		}
 
@@ -31,15 +28,12 @@ namespace GameServer_MJ
 		public void MsgGetAchieve(Player player, ProtocolBase protoBase)
 		{
 			ProtocolJson protocol = protoBase as ProtocolJson;
-			string protocolName = protocol.GetName();
+			string ServerName = protocol.GetName();
 
-			JsonData Jdata = new JsonData();
-			Jdata["ServerProtoCol"] = protocolName;
-			Jdata["Win"] = player.data.win;
-			Jdata["Fail"] = player.data.fail;
-
-			ProtocolJson protocolRet = new ProtocolJson(Jdata.ToJson());
-			player.Send(protocolRet);
+			JsonData SendData = new JsonData();
+			SendData["Win"] = player.data.win;
+			SendData["Fail"] = player.data.fail;
+			player.Send(ServerName, SendData);
 			Console.WriteLine(string.Format("MsgGetScore id:{0} win:{1} fail:{2}", player.id, player.data.win, player.data.fail));
 		}
 	}
